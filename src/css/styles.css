@@ -60,7 +60,9 @@ body {
 
 /* --- Button States (.search-btn) --- */
 
-.search-btn {
+.search-btn,
+.load-more-btn
+{
     /* Normal State (Base Style) */
     background-color: #5d8aff; /* The normal blue color */
     color: white;
@@ -72,6 +74,17 @@ body {
     font-weight: 500;
     transition: background-color 0.15s, transform 0.15s;
     user-select: none;
+}
+
+.load-more-btn{
+    margin-top: 30px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.load-more-btn.is-hidden{
+    display: none;
 }
 
 /* Hover State */
@@ -219,7 +232,7 @@ body {
     margin: 0 auto;
     position: relative;
     border: 3px solid;
-    border-color:#de3500 #0000 #6b6767 #0000;
+    border-color:#3b078f #0000 #6b6767 #0000;
     border-radius: 50%;
     box-sizing: border-box;
     animation: 1s rotate linear infinite;
@@ -234,7 +247,7 @@ body {
     transform: translate(-10px, 19px) rotate(-35deg);
   }
  .loader:after {
-    border-color: #de3500 #0000 #0000 #0000 ;
+    border-color: #3b078f #0000 #0000 #0000 ;
     transform: translate(32px, 3px) rotate(-35deg);
   }
 

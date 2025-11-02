@@ -34,7 +34,33 @@ const refs = {
     searchForm: document.querySelector('.js-search-form'), // Reference to the main search form element.
     gallery: document.querySelector('.js-gallery'), // Reference to the container where gallery cards are rendered.
     loader: document.querySelector('.js-loader'),
+    loadMoreBtn: document.querySelector('.js-load-more-btn')
 }
+
+let page = 1;
+let searchedQuery;
+
+const onLoadMoreBtnClick = async event => {
+    try{
+        page++;
+        refs.loader.classList.add('is-active')
+        const response = await fetchPhotosByQuery(searchedQuery, page);
+        const galleryCardTemplate = response.data.hits.map(pictureInfo => createGalleryCardTemplate(pictureInfo)).join('')
+        
+        // Insert the generated HTML string of gallery cards into the gallery container.
+        refs.gallery.insertAdjacentHTML('beforeend', galleryCardTemplate);
+        
+        // Initialize or refresh the SimpleLightbox to include the newly rendered images.
+        initLightbox();
+        refs.loader.classList.remove('is-active')
+        
+
+    }catch (err) {
+        console.log(err);
+    }
+
+}
+
 
 // Handler function executed when the search form is submitted.
 const onSearchFormSubmit = async event => {
@@ -44,7 +70,7 @@ const onSearchFormSubmit = async event => {
     const {target : searchForm} = event;
 
     // Get the value from the input field named 'user_query' and remove leading/trailing whitespace.
-    const searchedQuery = searchForm.elements.user_query.value.trim()
+    searchedQuery = searchForm.elements.user_query.value.trim()
     
 
     // Validation: Check if the search query is empty.
@@ -65,12 +91,11 @@ const onSearchFormSubmit = async event => {
     refs.gallery.innerHTML = '';
 
     refs.loader.classList.add('is-active')
-
-    const response = await fetchPhotosByQuery(searchedQuery);
-
-    console.log(response)
+    refs.loadMoreBtn.classList.add('is-hidden')
+    
 
     try{
+        const response = await fetchPhotosByQuery(searchedQuery, page);
         // Check if the API returned no results (hits array is empty).
         if (response.data.hits.length === 0){
             // Display a notification if no images were found for the query.
@@ -83,6 +108,9 @@ const onSearchFormSubmit = async event => {
     return // Stop execution if no hits are found.
         }
 
+        refs.loadMoreBtn.addEventListener('click', onLoadMoreBtnClick)
+
+
         // Map over the array of picture data (data.hits) and create an HTML card template for each.
         // Then, join the array of HTML strings into a single string.
         const galleryCardTemplate = response.data.hits.map(pictureInfo => createGalleryCardTemplate(pictureInfo)).join('')
@@ -92,55 +120,10 @@ const onSearchFormSubmit = async event => {
         
         // Initialize or refresh the SimpleLightbox to include the newly rendered images.
         initLightbox();
+        refs.loadMoreBtn.classList.remove('is-hidden')
     } catch (err) {
         console.log(err);
     }
-
-
-
-     
-
-
-
-
-
-
-
-    
-    // Call the API function to fetch photos based on the user's query.
-//     fetchPhotosByQuery(searchedQuery)
-//     .finally(() => {
-//         refs.loader.classList.remove('is-active');
-//     })
-//     .then(response => {
-//          console.log(response)
-//         // Check if the API returned no results (hits array is empty).
-//         if (response.data.hits.length === 0){
-//             // Display a notification if no images were found for the query.
-//             iziToast.show({
-//     message: 'Sorry, there are no images matching your search query. Please try again!',
-//     color: 'red', // Set notification color to red.
-//     position: 'topCenter', // Position the notification.
-
-// });
-//     return // Stop execution if no hits are found.
-//         }
-
-//         // Map over the array of picture data (data.hits) and create an HTML card template for each.
-//         // Then, join the array of HTML strings into a single string.
-//         const galleryCardTemplate = response.data.hits.map(pictureInfo => createGalleryCardTemplate(pictureInfo)).join('')
-        
-//         // Insert the generated HTML string of gallery cards into the gallery container.
-//         refs.gallery.innerHTML = galleryCardTemplate
-        
-//         // Initialize or refresh the SimpleLightbox to include the newly rendered images.
-//         initLightbox();
-
-//     })
-//     // Handle any errors that occur during the fetch process (e.g., network error).
-//     .catch(err => {
-//         console.log(err);
-//     });
 }
 
 // Attach the event listener to the search form to trigger the submission handler.

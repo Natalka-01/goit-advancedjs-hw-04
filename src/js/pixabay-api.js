@@ -6,7 +6,7 @@ const refs = {
     loader: document.querySelector('.js-loader'),
 }
 
-export const fetchPhotosByQuery = query => {
+export const fetchPhotosByQuery = (query, currentPage) => {
 
     const axiosParams = 
         {
@@ -14,6 +14,8 @@ export const fetchPhotosByQuery = query => {
             q: query,
             image_type: 'photo',
             orientation: 'horizontal',
+            page: currentPage,
+            per_page: 15,
             safesearch: true,
         };
 
