@@ -53,6 +53,18 @@ const onLoadMoreBtnClick = async event => {
         // Initialize or refresh the SimpleLightbox to include the newly rendered images.
         initLightbox();
         refs.loader.classList.remove('is-active')
+
+        if (page * 15 >= response.data.totalHits) {
+            refs.loadMoreBtn.classList.add('is-hidden')
+            refs.loadMoreBtn.removeEventListener('click', onLoadMoreBtnClick)
+            iziToast.show({
+    message: "We're sorry, but you've reached the end of search results.",
+    color: 'blue', // Set notification color to red.
+    position: 'topCenter', // Position the notification.
+
+});
+
+        }
         
 
     }catch (err) {
@@ -92,10 +104,12 @@ const onSearchFormSubmit = async event => {
 
     refs.loader.classList.add('is-active')
     refs.loadMoreBtn.classList.add('is-hidden')
+    page = 1
     
 
     try{
         const response = await fetchPhotosByQuery(searchedQuery, page);
+
         // Check if the API returned no results (hits array is empty).
         if (response.data.hits.length === 0){
             // Display a notification if no images were found for the query.
