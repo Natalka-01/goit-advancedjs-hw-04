@@ -37,7 +37,7 @@ const refs = {
 }
 
 // Handler function executed when the search form is submitted.
-const onSearchFormSubmit = event => {
+const onSearchFormSubmit = async event => {
     event.preventDefault(); // Prevent the default form submission and page reload.
 
     // Destructure the target element from the event object for easier access.
@@ -65,16 +65,14 @@ const onSearchFormSubmit = event => {
     refs.gallery.innerHTML = '';
 
     refs.loader.classList.add('is-active')
-    
-    // Call the API function to fetch photos based on the user's query.
-    fetchPhotosByQuery(searchedQuery)
-    .finally(() => {
-        refs.loader.classList.remove('is-active');
-    })
-    .then(data => {
-        console.log(data)
+
+    const response = await fetchPhotosByQuery(searchedQuery);
+
+    console.log(response)
+
+    try{
         // Check if the API returned no results (hits array is empty).
-        if (data.hits.length === 0){
+        if (response.data.hits.length === 0){
             // Display a notification if no images were found for the query.
             iziToast.show({
     message: 'Sorry, there are no images matching your search query. Please try again!',
@@ -87,19 +85,62 @@ const onSearchFormSubmit = event => {
 
         // Map over the array of picture data (data.hits) and create an HTML card template for each.
         // Then, join the array of HTML strings into a single string.
-        const galleryCardTemplate = data.hits.map(pictureInfo => createGalleryCardTemplate(pictureInfo)).join('')
+        const galleryCardTemplate = response.data.hits.map(pictureInfo => createGalleryCardTemplate(pictureInfo)).join('')
         
         // Insert the generated HTML string of gallery cards into the gallery container.
         refs.gallery.innerHTML = galleryCardTemplate
         
         // Initialize or refresh the SimpleLightbox to include the newly rendered images.
         initLightbox();
-
-    })
-    // Handle any errors that occur during the fetch process (e.g., network error).
-    .catch(err => {
+    } catch (err) {
         console.log(err);
-    });
+    }
+
+
+
+     
+
+
+
+
+
+
+
+    
+    // Call the API function to fetch photos based on the user's query.
+//     fetchPhotosByQuery(searchedQuery)
+//     .finally(() => {
+//         refs.loader.classList.remove('is-active');
+//     })
+//     .then(response => {
+//          console.log(response)
+//         // Check if the API returned no results (hits array is empty).
+//         if (response.data.hits.length === 0){
+//             // Display a notification if no images were found for the query.
+//             iziToast.show({
+//     message: 'Sorry, there are no images matching your search query. Please try again!',
+//     color: 'red', // Set notification color to red.
+//     position: 'topCenter', // Position the notification.
+
+// });
+//     return // Stop execution if no hits are found.
+//         }
+
+//         // Map over the array of picture data (data.hits) and create an HTML card template for each.
+//         // Then, join the array of HTML strings into a single string.
+//         const galleryCardTemplate = response.data.hits.map(pictureInfo => createGalleryCardTemplate(pictureInfo)).join('')
+        
+//         // Insert the generated HTML string of gallery cards into the gallery container.
+//         refs.gallery.innerHTML = galleryCardTemplate
+        
+//         // Initialize or refresh the SimpleLightbox to include the newly rendered images.
+//         initLightbox();
+
+//     })
+//     // Handle any errors that occur during the fetch process (e.g., network error).
+//     .catch(err => {
+//         console.log(err);
+//     });
 }
 
 // Attach the event listener to the search form to trigger the submission handler.
