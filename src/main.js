@@ -34,8 +34,9 @@ const refs = {
     searchForm: document.querySelector('.js-search-form'), // Reference to the main search form element.
     gallery: document.querySelector('.js-gallery'), // Reference to the container where gallery cards are rendered.
     loader: document.querySelector('.js-loader'),
-    loadMoreBtn: document.querySelector('.js-load-more-btn')
+    loadMoreBtn: document.querySelector('.js-load-more-btn'),
 }
+
 
 let page = 1;
 let searchedQuery;
@@ -49,10 +50,23 @@ const onLoadMoreBtnClick = async event => {
         
         // Insert the generated HTML string of gallery cards into the gallery container.
         refs.gallery.insertAdjacentHTML('beforeend', galleryCardTemplate);
+
+       
         
         // Initialize or refresh the SimpleLightbox to include the newly rendered images.
         initLightbox();
         refs.loader.classList.remove('is-active')
+
+        const firstGalleryCard = document.querySelector('.gallery-card');
+
+        const cardHeight = firstGalleryCard.getBoundingClientRect().height;
+        
+        const scrollDistance = cardHeight * 2;
+
+        window.scrollBy({
+            top: scrollDistance, 
+            behavior: "smooth"   
+        });
 
         if (page * 15 >= response.data.totalHits) {
             refs.loadMoreBtn.classList.add('is-hidden')
@@ -132,8 +146,10 @@ const onSearchFormSubmit = async event => {
         // Insert the generated HTML string of gallery cards into the gallery container.
         refs.gallery.innerHTML = galleryCardTemplate
         
+        
         // Initialize or refresh the SimpleLightbox to include the newly rendered images.
         initLightbox();
+        
         refs.loadMoreBtn.classList.remove('is-hidden')
     } catch (err) {
         console.log(err);
