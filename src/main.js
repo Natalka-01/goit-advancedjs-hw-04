@@ -136,7 +136,15 @@ const onSearchFormSubmit = async event => {
     return // Stop execution if no hits are found.
         }
 
-        refs.loadMoreBtn.addEventListener('click', onLoadMoreBtnClick)
+    if(response.data.totalHits > response.data.hits.length){
+        refs.loadMoreBtn.classList.remove('is-hidden');
+        refs.loadMoreBtn.addEventListener('click', onLoadMoreBtnClick);
+    } else {
+            // Сховати кнопку, якщо всі результати помістилися на першу сторінку
+        refs.loadMoreBtn.classList.add('is-hidden');
+     }
+
+        
 
 
         // Map over the array of picture data (data.hits) and create an HTML card template for each.
@@ -150,7 +158,7 @@ const onSearchFormSubmit = async event => {
         // Initialize or refresh the SimpleLightbox to include the newly rendered images.
         initLightbox();
         
-        refs.loadMoreBtn.classList.remove('is-hidden')
+        // refs.loadMoreBtn.classList.remove('is-hidden')
     } catch (err) {
         console.log(err);
     }
