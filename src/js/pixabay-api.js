@@ -6,7 +6,7 @@ const refs = {
     loader: document.querySelector('.js-loader'),
 }
 
-export const fetchPhotosByQuery = (query, currentPage) => {
+export const fetchPhotosByQuery = async (query, currentPage) => {
 
     const axiosParams = 
         {
@@ -19,7 +19,11 @@ export const fetchPhotosByQuery = (query, currentPage) => {
             safesearch: true,
         };
 
-    return axios.get( '/api/?', {params: axiosParams}).finally(() => {
-        refs.loader.classList.remove('is-active');
-    });
+    // return axios.get( '/api/?', {params: axiosParams}).finally(() => {
+    //     refs.loader.classList.remove('is-active');
+    // });
+
+    const response = await axios.get( '/api/?', {params: axiosParams});
+    
+    return response.data;
 };

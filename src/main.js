@@ -46,7 +46,7 @@ const onLoadMoreBtnClick = async event => {
         page++;
         refs.loader.classList.add('is-active')
         const response = await fetchPhotosByQuery(searchedQuery, page);
-        const galleryCardTemplate = response.data.hits.map(pictureInfo => createGalleryCardTemplate(pictureInfo)).join('')
+        const galleryCardTemplate = response.hits.map(pictureInfo => createGalleryCardTemplate(pictureInfo)).join('')
         
         // Insert the generated HTML string of gallery cards into the gallery container.
         refs.gallery.insertAdjacentHTML('beforeend', galleryCardTemplate);
@@ -68,7 +68,7 @@ const onLoadMoreBtnClick = async event => {
             behavior: "smooth"   
         });
 
-        if (page * 15 >= response.data.totalHits) {
+        if (page * 15 >= response.totalHits) {
             refs.loadMoreBtn.classList.add('is-hidden')
             refs.loadMoreBtn.removeEventListener('click', onLoadMoreBtnClick)
             iziToast.show({
@@ -125,7 +125,7 @@ const onSearchFormSubmit = async event => {
         const response = await fetchPhotosByQuery(searchedQuery, page);
 
         // Check if the API returned no results (hits array is empty).
-        if (response.data.hits.length === 0){
+        if (response.hits.length === 0){
             // Display a notification if no images were found for the query.
             iziToast.show({
     message: 'Sorry, there are no images matching your search query. Please try again!',
@@ -136,7 +136,7 @@ const onSearchFormSubmit = async event => {
     return // Stop execution if no hits are found.
         }
 
-    if(response.data.totalHits > response.data.hits.length){
+    if(response.totalHits > response.hits.length){
         refs.loadMoreBtn.classList.remove('is-hidden');
         refs.loadMoreBtn.addEventListener('click', onLoadMoreBtnClick);
     } else {
@@ -149,7 +149,7 @@ const onSearchFormSubmit = async event => {
 
         // Map over the array of picture data (data.hits) and create an HTML card template for each.
         // Then, join the array of HTML strings into a single string.
-        const galleryCardTemplate = response.data.hits.map(pictureInfo => createGalleryCardTemplate(pictureInfo)).join('')
+        const galleryCardTemplate = response.hits.map(pictureInfo => createGalleryCardTemplate(pictureInfo)).join('')
         
         // Insert the generated HTML string of gallery cards into the gallery container.
         refs.gallery.innerHTML = galleryCardTemplate
@@ -161,6 +161,9 @@ const onSearchFormSubmit = async event => {
         // refs.loadMoreBtn.classList.remove('is-hidden')
     } catch (err) {
         console.log(err);
+    } finally {
+    
+        refs.loader.classList.remove('is-active')
     }
 }
 
